@@ -1,6 +1,8 @@
 import Icon from "@/components/ui/icon";
 import { Book, CartItem, Bookmark, Tab, BOOKS, GENRES, RECOMMENDATIONS } from "./types";
 
+interface User { id: number; email: string; name: string; }
+
 interface TabScreensProps {
   tab: Tab;
   selectedGenre: string;
@@ -15,6 +17,7 @@ interface TabScreensProps {
   showSettings: boolean;
   darkMode: boolean;
   notificationsOn: boolean;
+  user: User;
   onSetTab: (tab: Tab) => void;
   onSetSelectedGenre: (genre: string) => void;
   onSetSearchQuery: (q: string) => void;
@@ -23,10 +26,11 @@ interface TabScreensProps {
   onAddToCart: (book: Book) => void;
   onRemoveFromCart: (id: number) => void;
   onChangeQty: (id: number, delta: number) => void;
-  onSetCart: (cart: CartItem[]) => void;
+  onClearCart: () => void;
   onSetShowSettings: (val: boolean) => void;
   onSetDarkMode: (val: boolean) => void;
   onSetNotificationsOn: (val: boolean) => void;
+  onLogout: () => void;
   notify: (msg: string) => void;
 }
 
@@ -44,6 +48,7 @@ export default function TabScreens({
   showSettings,
   darkMode,
   notificationsOn,
+  user,
   onSetTab,
   onSetSelectedGenre,
   onSetSearchQuery,
@@ -52,10 +57,11 @@ export default function TabScreens({
   onAddToCart,
   onRemoveFromCart,
   onChangeQty,
-  onSetCart,
+  onClearCart,
   onSetShowSettings,
   onSetDarkMode,
   onSetNotificationsOn,
+  onLogout,
   notify,
 }: TabScreensProps) {
   return (
@@ -346,7 +352,7 @@ export default function TabScreens({
               </div>
 
               <button
-                onClick={() => { onSetCart([]); notify("Заказ оформлен! Спасибо за покупку"); }}
+                onClick={onClearCart}
                 className="w-full bg-foreground text-background py-4 rounded-xl font-body font-medium hover:opacity-90 transition-opacity"
               >
                 Оформить заказ
@@ -411,7 +417,8 @@ export default function TabScreens({
           <div className="flex items-start justify-between mb-8">
             <div>
               <p className="text-muted-foreground text-xs font-body uppercase tracking-widest mb-1">Профиль</p>
-              <h1 className="font-display text-5xl font-light">Анна К.</h1>
+              <h1 className="font-display text-5xl font-light">{user.name}</h1>
+              <p className="text-muted-foreground text-xs font-body mt-1">{user.email}</p>
             </div>
             <button
               onClick={() => onSetShowSettings(true)}
@@ -452,7 +459,7 @@ export default function TabScreens({
             ))}
           </div>
 
-          <div className="bg-card border border-border rounded-2xl overflow-hidden">
+          <div className="bg-card border border-border rounded-2xl overflow-hidden mb-4">
             {[
               { icon: "ShoppingBag", label: "История заказов" },
               { icon: "Bookmark", label: "Мои закладки", badge: bookmarks.length || undefined },
@@ -476,6 +483,14 @@ export default function TabScreens({
               </button>
             ))}
           </div>
+
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border border-border text-muted-foreground hover:text-destructive hover:border-destructive transition-colors font-body text-sm"
+          >
+            <Icon name="LogOut" size={16} />
+            Выйти из аккаунта
+          </button>
         </div>
       )}
     </>
